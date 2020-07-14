@@ -79,6 +79,13 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function loadCategories(): Promise<void> {
       // Load categories from API
+      try {
+        const response = await api.get('categories');
+
+        setCategories(response.data);
+      } catch (err) {
+        console.log(err);
+      }
     }
 
     loadCategories();
