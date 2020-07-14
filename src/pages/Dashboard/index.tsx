@@ -61,10 +61,14 @@ const Dashboard: React.FC = () => {
     async function loadFoods(): Promise<void> {
       // Load Foods from API
 
-      let url = 'foods';
+      let url = 'foods?';
 
       if (selectedCategory) {
-        url = url.concat(`?category_like=${selectedCategory}`);
+        url = url.concat(`category_like=${selectedCategory}`);
+      }
+
+      if (searchValue !== '') {
+        url = url.concat(`name_like=${searchValue}`);
       }
 
       try {
