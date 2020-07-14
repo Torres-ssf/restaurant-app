@@ -85,6 +85,8 @@ const FoodDetails: React.FC = () => {
           ...foodFromApi,
           formattedPrice: formatValue(foodFromApi.price),
         });
+
+        setExtras(foodFromApi.extras);
       } catch (err) {
         console.log(err);
       }
