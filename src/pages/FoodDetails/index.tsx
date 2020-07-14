@@ -79,6 +79,8 @@ const FoodDetails: React.FC = () => {
       try {
         const foodResponse = await api.get(`foods/${id}`);
 
+        const favoriteResponse = await api.get('favorites');
+
         const foodFromApi = foodResponse.data as Food;
 
         const foodExtas = foodFromApi.extras.map(item => ({
@@ -86,12 +88,18 @@ const FoodDetails: React.FC = () => {
           quantity: 0,
         }));
 
+        const favoriteArr = favoriteResponse.data.filter(
+          (item: Food) => item.id === id,
+        );
+
         setFood({
           ...foodFromApi,
           formattedPrice: formatValue(foodFromApi.price),
         });
 
         setExtras(foodExtas);
+
+        setIsFavorite(favoriteArr.length > 0);
       } catch (err) {
         console.log(err);
       }
@@ -154,12 +162,30 @@ const FoodDetails: React.FC = () => {
     }
   }
 
-  const toggleFavorite = useCallback(() => {
+  const toggleFavorite = useCallback(async () => {
     // Toggle if food is favorite or not
+    try {
+      if (isFavorite) {
+        await api.delete(`favorites/${food.id}`);
+      } else {
+        await api.post('favorites', food);
+      }
+
+      setIsFavorite(oldState => !oldState);
+    } catch (err) {
+      console.log(err);
+    }
   }, [isFavorite, food]);
 
   const cartTotal = useMemo(() => {
     // Calculate cartTotal
+    const extraTotal = extras.reduce((cumulator, extraItem) => {
+      cumulator += extraItem.quantity * extraItem.value;
+      return cumulator;
+    }, 0);
+    const foodTotal = food.price * foodQuantity;
+
+    return formatValue(extraTotal + foodTotal);
   }, [extras, food, foodQuantity]);
 
   async function handleFinishOrder(): Promise<void> {
