@@ -122,6 +122,24 @@ const FoodDetails: React.FC = () => {
 
   function handleDecrementExtra(id: number): void {
     // Decrement extra quantity
+    const extraIndex = extras.findIndex(item => item.id === id);
+
+    if (extras[extraIndex].quantity > 0) {
+      setExtras(oldState => {
+        const increasedQuantity = oldState[extraIndex].quantity - 1;
+
+        const newExtra = {
+          ...oldState[extraIndex],
+          quantity: increasedQuantity,
+        };
+
+        return [
+          ...oldState.slice(0, extraIndex),
+          newExtra,
+          ...oldState.slice(extraIndex + 1, oldState.length),
+        ];
+      });
+    }
   }
 
   function handleIncrementFood(): void {
