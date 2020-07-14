@@ -60,8 +60,15 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function loadFoods(): Promise<void> {
       // Load Foods from API
+
+      let url = 'foods';
+
+      if (selectedCategory) {
+        url = url.concat(`?category_like=${selectedCategory}`);
+      }
+
       try {
-        const response = await api.get('foods');
+        const response = await api.get(url);
 
         setFoods(
           response.data.map((food: Food) => {
