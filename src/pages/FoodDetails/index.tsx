@@ -81,12 +81,17 @@ const FoodDetails: React.FC = () => {
 
         const foodFromApi = foodResponse.data as Food;
 
+        const foodExtas = foodFromApi.extras.map(item => ({
+          ...item,
+          quantity: 0,
+        }));
+
         setFood({
           ...foodFromApi,
           formattedPrice: formatValue(foodFromApi.price),
         });
 
-        setExtras(foodFromApi.extras);
+        setExtras(foodExtas);
       } catch (err) {
         console.log(err);
       }
@@ -97,6 +102,22 @@ const FoodDetails: React.FC = () => {
 
   function handleIncrementExtra(id: number): void {
     // Increment extra quantity
+    const extraIndex = extras.findIndex(item => item.id === id);
+
+    setExtras(oldState => {
+      const increasedQuantity = oldState[extraIndex].quantity + 1;
+
+      const newExtra = {
+        ...oldState[extraIndex],
+        quantity: increasedQuantity,
+      };
+
+      return [
+        ...oldState.slice(0, extraIndex),
+        newExtra,
+        ...oldState.slice(extraIndex + 1, oldState.length),
+      ];
+    });
   }
 
   function handleDecrementExtra(id: number): void {
